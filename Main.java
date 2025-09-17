@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Main {
 
@@ -12,7 +13,7 @@ public class Main {
 		    Card(String suit, String rank, int value) {
 		        this.suit = suit;
 		        this.rank = rank;
-		        this.value = value;
+		        this.value = value; //valueはなくてもいいかも
 		    }
 		    
 		    void printCard() {
@@ -32,12 +33,18 @@ public class Main {
 		            }
 		        }
 	        }
+	        void shuffle() {
+	            Collections.shuffle(cards);
+	        }
 		}
 		
+		//カードシャッフル済みの山札(deck)を作成
         Deck deck = new Deck();
+        deck.shuffle();
         for(Card card:deck.cards) {
         	card.printCard();
         }
-
+        
+        
 	}
 }
