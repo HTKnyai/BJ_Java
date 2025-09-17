@@ -18,7 +18,7 @@ public class Main {
 		    }
 		    
 		    void printCard() {
-		        System.out.println("suit:"+suit + ",rank:"+rank + ",value"+value);
+		        System.out.println("suit:"+suit + ",rank:"+rank);
 		    }
 		}
 		
@@ -63,9 +63,20 @@ public class Main {
         	
             int countScore() {
             	int score=0;
+            	int aceCount=0;
+            	
             	for(Card card:cardsInHand) {
             		score += card.value;
+            		if (card.rank.equals("A")) {
+            			aceCount++;
+            		}
             	}
+            	
+            	while (aceCount>0&&score+10<=21) {
+            		score += 10;
+            		aceCount --;
+            	}
+            	
             	return score;
             }
             
@@ -183,7 +194,6 @@ public class Main {
 		    System.out.println("===ディーラーの手札...===");
 	        dealerHand.showHand();
 	        System.out.println("===================");
-	
 	        
 	        System.out.println("");
 	       	System.out.println("ディーラー:"+dealerScore);
