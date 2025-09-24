@@ -30,6 +30,8 @@ public class GameManager {
     		
         boolean isDealerBJ = dealerHand.countScore() == 21;
         boolean isPlayerBJ = playerHand.countScore() == 21;
+        boolean isDoubleDown = playerHand.isDoubleDown;
+
         String dealerLine="";
     	
         switch(result) {
@@ -38,11 +40,11 @@ public class GameManager {
         		break;
         	case DEALER_WINS:
         		dealerLine="dealerWin";
-        		chip.removeChip(isDealerBJ);
+        		chip.removeChip(isDealerBJ,isDoubleDown);
         		break;
         	case PLAYER_WINS:
         		dealerLine="playerWin";
-        		chip.addChip(isPlayerBJ);
+        		chip.addChip(isPlayerBJ,isDoubleDown);
         		break;
         }
         ui.showTurnResult(playerHand, dealerHand,result.toString(),chip);
@@ -51,18 +53,29 @@ public class GameManager {
     
     void playerTurn(Deck deck,Hand playerHand) {
     	ui.dealerTalk("playerTurn");
-        while(true) {
-	        boolean hit = ui.askYN(scanner, "追加でカードを引きますか？y/n");
-	        if(!hit)return;
-	        ui.dealerTalk("playerHit");
-	        ui.showLoading();
-	        playerHand.hit(deck);
-	        ui.showPlayerHand(playerHand);     
-	       	if (playerHand.isBust()) {
-	       		ui.showBustEffect();
-	           	ui.dealerTalk("playerBust");
-	       		break;
-	       	}
+        boolean doubleDown = ui.askYN(scanner,"ダブルダウンを行いますか？y/n");
+        if(doubleDown) {
+        	playerHitOnce(deck, playerHand);
+        	playerHand.isDoubleDown = true;
+            return;
+        }  	
+      
+        while(!playerHand.isBust()){
+            boolean hit = ui.askYN(scanner, "追加でカードを引きますか？y/n");
+            if(!hit) return;
+
+            playerHitOnce(deck, playerHand);
+        }
+    }
+    
+    void playerHitOnce(Deck deck,Hand playerHand) {
+        ui.dealerTalk("playerHit");
+        ui.showLoading();
+        playerHand.hit(deck);
+        ui.showPlayerHand(playerHand);
+        if(playerHand.isBust()) {
+            ui.showBustEffect();
+            ui.dealerTalk("playerBust");
         }
     }
     
