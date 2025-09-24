@@ -2,6 +2,8 @@ import java.util.ArrayList;
 
 public class Hand{
 	ArrayList<Card> cardsInHand = new ArrayList<>();
+
+	boolean isDoubleDown = false;	
 	
 	boolean isBust() {
 		return countScore()>21;
