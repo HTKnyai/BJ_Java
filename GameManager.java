@@ -30,78 +30,68 @@ public class GameManager {
     		
         boolean isDealerBJ = dealerHand.countScore() == 21;
         boolean isPlayerBJ = playerHand.countScore() == 21;
+        String dealerLine="";
     	
         switch(result) {
         	case DRAW:
+        		dealerLine="draw";
         		break;
         	case DEALER_WINS:
+        		dealerLine="dealerWin";
         		chip.removeChip(isDealerBJ);
         		break;
         	case PLAYER_WINS:
+        		dealerLine="playerWin";
         		chip.addChip(isPlayerBJ);
         		break;
         }
         ui.showTurnResult(playerHand, dealerHand,result.toString(),chip);
+        ui.dealerTalk(dealerLine);
     }
     
     void playerTurn(Deck deck,Hand playerHand) {
+    	ui.dealerTalk("playerTurn");
         while(true) {
 	        boolean hit = ui.askYN(scanner, "追加でカードを引きますか？y/n");
 	        if(!hit)return;
+	        ui.dealerTalk("playerHit");
+	        ui.showLoading();
 	        playerHand.hit(deck);
 	        ui.showPlayerHand(playerHand);     
-
-	       	if (playerHand.isBust()) break;
+	       	if (playerHand.isBust()) {
+	       		ui.showBustEffect();
+	           	ui.dealerTalk("playerBust");
+	       		break;
+	       	}
         }
     }
     
     void dealerTurn(Hand dealerHand,Deck deck) {
-    	int dealerScore=dealerHand.countScore();
+    	ui.dealerTalk("dealerTurn");
+    	ui.showLoading(800);
+    	while(true) {
+	    	if((dealerHand.isBust())) {
+	    		break;
+	    	}else if(dealerHand.countScore()<=16) {
+	    		dealerHand.hit(deck);        	        
+	    	}else {
+	    		break;
+	    	}
+		}	
+    }
+    
+    boolean askNextRound(Chip chip){
+    	if(chip.chipCount<=0) {
+    		ui.print("GAME OVER!!");
+    		return false;
+    	}else {
+        	return ui.askYN(scanner, "次のラウンドに進みますか？y/n");
 
-        while(dealerScore<=16) {
-    		dealerHand.hit(deck);
-        	dealerScore = dealerHand.countScore();
-        	
-	        if (dealerHand.isBust()) break;
-        }
-    }
-    
-    /*
-    void takeTurn(Deck deck,Hand hand,String who) {
-    	int handScore = hand.countScore();
-    	
-    	if(who.equals("Player")) {
-	        boolean hit = ui.askYN(scanner, "追加でカードを引きますか？");
-	        if(!hit)return;
-	        hand.hit(deck);
-	        ui.showPlayerHand(hand);
-	       	if (hand.isBust()) {
-	        	ui.showBust("プレイヤー");
-	        }
-    	}
-    	else {
-    		
     	}
     }
-    */
     
-    boolean hasChipsRemain(Chip chip) {
-    	boolean chipRemain = chip.chipCount > 0;
-        if(!chipRemain) ui.print("GAMEOVER!!");
-    	return chipRemain;
+    boolean askNextGame() {
+    	ui.showLoading();
+    	return ui.askYN(scanner, "新しいゲームを開始しますか？y/n");
     }
-    
-    boolean askNextRound() {
-    	System.out.println("ゲームを続けますか!y/n");
-        while(true) {
-	        String continueInput = scanner.nextLine();
-	        if(continueInput.equalsIgnoreCase("y")) {
-	        	return true;
-	        }else if(continueInput.equalsIgnoreCase("n")) {
-	        	return false;
-	        }else {
-	        	System.out.println("y/nで入力してください。");
-	        }
-        }
-    }    
 }
