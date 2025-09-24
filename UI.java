@@ -1,6 +1,8 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class UI {
+	
 	void print() {
 	       System.out.println();
 		}
@@ -34,36 +36,44 @@ public class UI {
 	void showStartMessage(){
         print();
         print();
-        print("ゲームを始めます！");
+        print("ゲームを始めます");
         print();
+		dealerTalk("startGame");
+
 	}
 	
     void showHand(Hand hand,String member) {
-        print("==="+member+"の手札...===");
+        print("=="+member+"の手札==");
         for(Card eachcards:hand.cardsInHand) {
+        	//System.out.print("   ");
         	eachcards.printCard();
         }
-        System.out.println("===================");
+        print("====================");
         print();
     };
 	
 	void showPlayerHand(Hand hand) {
-        showHand(hand,"あなた");
+        showHand(hand,"プレイヤー");
         print();
 }
 	
 	void showDealerHand(Hand hand) {
         showHand(hand,"ディーラー");
+        if(hand.isBust()) {
+    		dealerTalk("dealerBust");
+        }
         print();
 	}
 	
 	void showDealerHandLimited(Hand hand) {
-	    System.out.println("===ディーラーの手札...===");
+	    print("==ディーラーの手札==");
+    	//System.out.print("   ");
 	    hand.cardsInHand.get(0).printCard();
 	    for(int i=1;i<hand.cardsInHand.size();i++) {
-	    	System.out.println("suit:?,rank:?,value?");
+        	//System.out.print("   ");
+	    	print("suit:?,rank:?");
 	    }
-        System.out.println("===================");
+        print("====================");
 	    print();
 	}
 	
@@ -73,14 +83,15 @@ public class UI {
     	
         showDealerHand(dealerHand);
         
+
        	print("ディーラー:"+dealerScore);
        	print("プレイヤー:"+playerScore);
-        print();
     	if(playerHand.isBust())showBust("プレイヤー");
     	if(dealerHand.isBust())showBust("ディーラー");
         print();
         print("結果："+result);
         print("チップ："+chip.chipCount);
+        showLoading(300);
         print();
     }
 	
@@ -101,7 +112,151 @@ public class UI {
 	        }
         }
 	}
+	
 	void showBust(String who) {
     	print(who+"BUST!");
+	}
+	
+	void showBustEffect() {
+	    print(
+	        "██████╗ ██╗   ██╗███████╗████████╗██╗██╗\n" +
+	        "██╔══██╗██║   ██║██╔════╝╚══██╔══╝██║██║\n" +
+	        "██████╔╝██║   ██║███████╗   ██║   ██║██║\n" +
+	        "██╔══██╗██║   ██║╚════██║   ██║   ╚═╝╚═╝\n" +
+	        "██████╔╝╚██████╔╝███████║   ██║   ██╗██╗\n" +
+	        "╚═════╝  ╚═════╝ ╚══════╝   ╚═╝   ╚═╝╚═╝\n"
+	    );
+	}
+	
+	void showLoading() {
+	    showLoading(500);
+	}
+	
+	void showLoading(int delayTime) {
+		delayTime = Math.max(delayTime, 1);//0入力時の例外対策
+		for(int i=0;i<10;i++) {
+			System.out.print("◆");
+			try {
+				Thread.sleep(delayTime/10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		print();
+	}
+	
+	Random rand = new Random();
+	
+	void dealerTalk(String Situation) {
+		String lines[]=null;
+	    switch(Situation) {
+	        case "startGame":
+	            lines = new String[] {
+	                "どうぞお手柔らかに...",
+	                "準備はよろしいですかな？",
+	                "運試しと参りましょう...",
+	                "まずは軽く肩慣らしですな",
+	                "落ち着いて参りましょう"
+	            };
+	            break;
+	        case "playerTurn":
+	            lines = new String[] {
+	                "どうされますかな...",
+	                "ヒット？それともステイか...",
+	                "ほう……",
+	                "慎重に参りましょうか…",
+	                "焦らずに判断されよ"
+	            };
+	            break;
+	        case "playerHit":
+	            lines = new String[] {
+	                "承知しました...",
+	                "ほほう...",
+	                "左様で",
+	                "ええ...",
+	                "ふむ、良い選択かも知れませんな"
+	            };
+	            break;
+	        case "dealerTurn":
+	            lines = new String[] {
+	                "ふむ…",
+	                "では…",
+	                "私も参りますぞ…",
+	                "少々手加減はせぬといけませんな",
+	                "じっくり行きますぞ"
+	            };
+	            break;
+	        case "playerWin":
+	            lines = new String[] {
+	                "うむ、見事な腕前。感心しましたな",
+	                "お見事、まだまだ油断は禁物ですぞ",
+	                "フフフ…見事な勝利ですな",
+	                "よくやられましたな",
+	                "勘が冴えておりますな",
+	            };
+	            break;
+	        case "dealerWin":
+	            lines = new String[] {
+	                "ほほう……運が味方しておるようです",
+	                "ほほほ、運も実力のうち……",
+	                "勝負とは最後までわからぬものですな",
+	                "フフフ…残念でしたな",
+	                "次に期待しましょう",
+	            };
+	            break;
+	        case "draw":
+	            lines = new String[] {
+	                "まだまだ楽しめそうですな、フフフ……",
+	                "なかなか拮抗しておりますな",
+	                "フフフ、良い勝負でしたぞ",
+	                "油断はできませんな…",
+	                "これぞ運と実力のせめぎ合いですな"
+	            };
+	            break;
+	        case "playerBust":
+	            lines = new String[] {
+	                "勇気ある選択でしたな",
+	                "これはこれは...",
+	                "惜しい結果ですな",
+	                "焦りは禁物ですぞ",
+	                "次は落ち着いて参りましょう",
+	                "フフフ、まだ望みはありますぞ"
+	            };
+	            break;
+	        case "dealerBust":
+	            lines = new String[] {
+	                "おおっと…これはこれは……",
+	                "少々熱が入りすぎましたかな…？",
+	                "うむ、やはり油断は禁物ですな",
+	            };
+	            break;
+	        case "endGame":
+	            lines = new String[] {
+	                "また、お待ちしておりますぞ…",
+	                "それではまた…",
+	                "楽しませていただきました",
+	                "またのお越しを",
+	                "ゆっくり休んでくださいませ"
+	            };
+	            break;
+	        case "endOver80":
+	        	lines = new String[] {
+	        		"これはこれは... 見事というほかありませんな",
+	        		"あっぱれにございます",
+	        		"...素晴らしいものをお持ちのようですな"
+	        	};
+	        	break;
+
+	    }
+		print("「"+lines[rand.nextInt(lines.length)]+"」");
+		print("");
+	}
+	
+	void endGame(Chip chip) {
+		print("今回のゲームを終了します!");
+		if(chip.chipCount>=80) {
+			dealerTalk("endOver80");
+		}
+    	dealerTalk("endGame");
 	}
 }
