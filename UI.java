@@ -239,7 +239,7 @@ public class UI {
 	                "ゆっくり休んでくださいませ"
 	            };
 	            break;
-	        case "endOver80":
+	        case "endOver100":
 	        	lines = new String[] {
 	        		"これはこれは... 見事というほかありませんな",
 	        		"あっぱれにございます",
@@ -254,8 +254,8 @@ public class UI {
 	
 	void endGame(Chip chip) {
 		print("今回のゲームを終了します!");
-		if(chip.chipCount>=80) {
-			dealerTalk("endOver80");
+		if(chip.chipCount>=100) {
+			dealerTalk("endOver100");
 		}
     	dealerTalk("endGame");
 	}
