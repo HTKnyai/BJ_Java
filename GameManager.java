@@ -28,11 +28,13 @@ public class GameManager {
     void applyResult(Hand playerHand,Hand dealerHand,Chip chip) {
     	Result result = judge(playerHand,dealerHand);
     		
+    	int bet = playerHand.bet;
         boolean isDealerBJ = dealerHand.countScore() == 21;
         boolean isPlayerBJ = playerHand.countScore() == 21;
         boolean isDoubleDown = playerHand.isDoubleDown;
 
         String dealerLine="";
+        int chipDelta=0;
     	
         switch(result) {
         	case DRAW:
@@ -40,19 +42,20 @@ public class GameManager {
         		break;
         	case DEALER_WINS:
         		dealerLine="dealerWin";
-        		chip.removeChip(isDealerBJ,isDoubleDown);
+                chipDelta = chip.changeChip(bet, isDealerBJ,isDoubleDown, false);
         		break;
         	case PLAYER_WINS:
         		dealerLine="playerWin";
-        		chip.addChip(isPlayerBJ,isDoubleDown);
+                chipDelta = chip.changeChip(bet, isPlayerBJ,isDoubleDown, true);
         		break;
         }
-        ui.showTurnResult(playerHand, dealerHand,result.toString(),chip);
+        ui.showTurnResult(playerHand, dealerHand,result.toString(),chip, chipDelta);
         ui.dealerTalk(dealerLine);
     }
     
-    void playerTurn(Deck deck,Hand playerHand) {
+    void playerTurn(Deck deck,Hand playerHand,Chip chip) {
     	ui.dealerTalk("playerTurn");
+    	playerHand.bet = ui.askBet(scanner,chip);
         boolean doubleDown = ui.askYN(scanner,"ダブルダウンを行いますか？y/n");
         if(doubleDown) {
         	playerHitOnce(deck, playerHand);
@@ -67,6 +70,22 @@ public class GameManager {
             playerHitOnce(deck, playerHand);
         }
     }
+    
+    boolean isNaturalBJ(Hand playerHand,Hand dealerHand,Chip chip) {
+    	if(playerHand.countScore() == 21) {
+        	ui.showBJ();
+        	ui.dealerTalk("naturalBJ");
+        	applyNaturalBJ(playerHand, dealerHand, chip);
+        	return true;
+    	}
+    	else{return false;}
+    }
+    
+	void applyNaturalBJ(Hand playerHand,Hand dealerHand,Chip chip){
+	    int delta = chip.changeChip(chip.chipCount, true, false, true);
+		ui.showTurnResult(playerHand, dealerHand, "PLAYER_WINS(NaturalBJ)", chip, delta);
+	}
+
     
     void playerHitOnce(Deck deck,Hand playerHand) {
         ui.dealerTalk("playerHit");
