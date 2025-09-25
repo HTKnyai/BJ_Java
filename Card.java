@@ -12,4 +12,11 @@ class Card{
     void printCard() {
         System.out.println("suit:"+suit + ",rank:"+rank);
     }
+
 }
+/*
+┌─┐┌─┐
+│12││3 │
+│ ♠││ ♠│
+└─┘└─┘
+*/
