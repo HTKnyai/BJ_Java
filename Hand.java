@@ -3,7 +3,8 @@ import java.util.ArrayList;
 public class Hand{
 	ArrayList<Card> cardsInHand = new ArrayList<>();
 
-	boolean isDoubleDown = false;	
+	int bet = 10;
+	boolean isDoubleDown = false;
 	
 	boolean isBust() {
 		return countScore()>21;
