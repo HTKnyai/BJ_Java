@@ -6,6 +6,7 @@ class Deck{
     String[] suits = {"♠", "♥", "♦", "♣"};
     String[] ranks = {"A","2","3","4","5","6","7","8","9","10","J","Q","K"};
     Integer[] values   = {1,2,3,4,5,6,7,8,9,10,10,10,10};
+    UI ui = new UI();
     
     Deck(){
     	refill();
@@ -29,7 +30,7 @@ class Deck{
         if(needsRefill) {
         	refill();
         	shuffle();
-        	System.out.println("山札を補充　残り："+cardsInDeck.size()+"枚");
+        	ui.refillDeck(this);
         }
         if (cardsInDeck.isEmpty()) {
         	System.out.println("エラー：山札がなくなりました！");
