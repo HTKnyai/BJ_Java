@@ -18,7 +18,7 @@ public class Main {
             deck.shuffle();
 	        
 	        do{		
-	            // === 手札の準備 ===           y
+	            // === 手札の準備 ===
 				ui.showLoading();
 		        Hand playerHand = new Hand();
 		        Hand dealerHand = new Hand();
@@ -28,13 +28,16 @@ public class Main {
 		        ui.showDealerHandLimited(dealerHand);	        		    
 		        ui.showPlayerHand(playerHand);
 		        
-		        // === プレイヤー/ディーラーのターン ===
 		    	ui.showLoading();
-		        gameManager.playerTurn(deck, playerHand);
-		        gameManager.dealerTurn(dealerHand, deck);
-		
-		        // === 勝敗判定・状態更新 ===
-		        gameManager.applyResult(playerHand,dealerHand,chip);
+		    	if(!gameManager.isNaturalBJ(playerHand, dealerHand, chip)) {
+			        // === プレイヤー/ディーラーのターン ===
+			        gameManager.playerTurn(deck, playerHand, chip);
+			        gameManager.dealerTurn(dealerHand, deck);
+			        
+			        // === 勝敗判定・状態更新 ===
+			        gameManager.applyResult(playerHand, dealerHand, chip);
+		        }		
+
 		        
 		        // === 続行処理 ===
 		        roundContinueFlag = gameManager.askNextRound(chip);
